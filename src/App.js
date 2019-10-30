@@ -1,26 +1,44 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-function App() {
+
+const App = (props) => {
+  const [input, setInput] = React.useState('');
+  const [TAF, setTAF] = React.useState([]);
+  const [line, setLine] = React.useState(['']);
+  const [block, setBlock] = React.useState('');
+  const newLine = /\n/;
+  const newBlock = /\s/;
+
+  const checkTAF = (e) => {
+    console.log('========================> Checking Taf', input);
+    splitTAF(input)
+    console.log('========================>', line);
+  }
+
+  const splitTAF = (input) => {
+    console.log('========================>', typeof input);
+    const splittingLines = input.split(newLine)
+    setLine(splittingLines)
+    console.log('========================>', splittingLines);
+    console.log('========================>', typeof splittingLines);
+  }
+
+  const handleChange = (event) => {
+    setInput(event.target.value)
+  }
+
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <div>TAF Checker</div>
+        <textarea className="TAFCheck" rows="10" cols="100" onChange={(e) => {handleChange(e)}}></textarea>
+        <button onClick={(e)=>{checkTAF(e)}}>Check TAF</button>
       </header>
     </div>
   );
 }
+
 
 export default App;
