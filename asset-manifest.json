@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/TAFChecker/static/css/main.395e0c27.chunk.css",
+    "main.js": "/TAFChecker/static/js/main.fe788a86.chunk.js",
+    "main.js.map": "/TAFChecker/static/js/main.fe788a86.chunk.js.map",
+    "runtime-main.js": "/TAFChecker/static/js/runtime-main.be4fa7cf.js",
+    "runtime-main.js.map": "/TAFChecker/static/js/runtime-main.be4fa7cf.js.map",
+    "static/js/2.ff514d2b.chunk.js": "/TAFChecker/static/js/2.ff514d2b.chunk.js",
+    "static/js/2.ff514d2b.chunk.js.map": "/TAFChecker/static/js/2.ff514d2b.chunk.js.map",
+    "index.html": "/TAFChecker/index.html",
+    "precache-manifest.a8deaba98316e388be8402513b07132f.js": "/TAFChecker/precache-manifest.a8deaba98316e388be8402513b07132f.js",
+    "service-worker.js": "/TAFChecker/service-worker.js",
+    "static/css/main.395e0c27.chunk.css.map": "/TAFChecker/static/css/main.395e0c27.chunk.css.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.be4fa7cf.js",
+    "static/js/2.ff514d2b.chunk.js",
+    "static/css/main.395e0c27.chunk.css",
+    "static/js/main.fe788a86.chunk.js"
+  ]
+}
