@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "c0d99291564abbff82079fa39e12a327",
+    "revision": "b5b920685a050e467c806ae390f61a73",
     "url": "/TAFChecker/index.html"
   },
   {
-    "revision": "84aeb405597c61c96fba",
+    "revision": "36bda735c572ccb54644",
     "url": "/TAFChecker/static/css/main.395e0c27.chunk.css"
   },
   {
-    "revision": "9d972d2f2e1d6fef981b",
-    "url": "/TAFChecker/static/js/2.ff514d2b.chunk.js"
+    "revision": "d8cfdeef2d8bf8e47cd2",
+    "url": "/TAFChecker/static/js/2.1514aabe.chunk.js"
   },
   {
-    "revision": "84aeb405597c61c96fba",
-    "url": "/TAFChecker/static/js/main.fe788a86.chunk.js"
+    "revision": "36bda735c572ccb54644",
+    "url": "/TAFChecker/static/js/main.895fa2c9.chunk.js"
   },
   {
     "revision": "a497f7a80d7b5092f5c3",
