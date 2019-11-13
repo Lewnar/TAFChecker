@@ -17,7 +17,7 @@ const App = (props) => {
   const Time = /[0-3][0-9][0-2][0-9][/][0-3][0-9][0-2][0-9]/;
   const Wind = /([0-3][0-9][0]|(VRB))[0-9][0-9]((KT)|(G)[0-9][0-9](KT))/;
   const Vis = /((9999)|(9000)|(8000)|(7000)|(6000)|(5000)|(4800)|(4700)|(4500)|(4400)|(4000)|(3700)|(3600)|(3400)|(3200)|(3000)|(2800)|(2600)|(2400)|(2200)|(2000)|(1800)|(1700)|(1600)|(1500)|(1400)|(1300)|(1200)|(1100)|(1000)|(0900)|(0800)|(0700)|(0600)|(0500)|(0400)|(0300)|(0200)|(0100)|(0000)|([-]0200))/;
-  const Weather = /((RA)|([-]RA)|([+]RA)|(SN)|([-]SN)|([+]SN)|(TS)|([-]TS)|([+]TS)|(TSRA)|([-]TSRA)|([+]TSRA))/;
+  const Weather = /((RA)|([-]RA)|([+]RA)|(SHRA)|([-]SHRA)|([+]SHRA)|(TS)|([-]TS)|([+]TS)|(TSRA)|([-]TSRA)|([+]TSRA)|(SN)|([-]SN)|([+]SN))/;
   const Sky = /((SKC)|(((FEW)|(SCT)|(BKN)|(OVC))([0-9]{3}|[0-9]{3}(CB)))|((VV)[0-9]{3}))/;
   const Alt = /(QNH)[0-9]{4}(INS)/;
   const Ice = /(6)[0-9]{5}/;
@@ -151,10 +151,20 @@ const App = (props) => {
     if(block.match(Time) && block.length === 9 && lineNumber === 0){
       const hour1 = parseInt(block.slice(2,4))
       const hour2 = parseInt(block.slice(7))
-      if((24 - hour1)+hour2 === 30){
-         return true
+      const date1 = block.slice(0,2)
+      const date2 = block.slice(5,7)
+      if(date2 - date1 === 2){
+        if((24 - hour1)+hour2 + 24 === 30){
+          return true
+       } else {
+         return false
+       }
       } else {
-        return false
+        if((24 - hour1)+hour2 === 30){
+           return true
+        } else {
+          return false
+        }
       }
     // } else if(block.match(Sky)){
     //   const layOut = block
