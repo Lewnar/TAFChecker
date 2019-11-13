@@ -7,9 +7,24 @@ const App = (props) => {
   // const [output, setOutput] = React.useState([])
   const newLine = /\n/;
   const newBlock = /\s/;
-  const firstLine = [/((TAF)|(TAF) ((AMD)|(COR)))/, /[A-Z]{4}/, /[0-9]{6}[Z]/, /[0-3][0-9][0-2][0-9][/][0-3][0-9][0-2][0-9]/, /([0-3][0-9][0]|(VRB))[0-9][0-9]((KT)|(G)[0-9][0-9](KT))/, /[0-9]{4}/, /((SKC)|([A-Z]{3}[0-9]{3})|((VV)[0-9]{3}))/, /(QNH)[0-9]{4}(INS)/]
-  const otherLines = [/((BECMG)|(TEMPO))/, /([0-3][0-9][0-2][0-9][/][0-3][0-9][0-2][0-9])/, /(([0-9]{3}|(VRB))[0-9]{2}((KT)|(G)[0-9]{2}(KT)))/, /[0-9]{4}/, /((SKC)|(((FEW)|(SCT)|(BKN)|(OVC))[0-9]{3})|((VV)[0-9]{3}))/, /(QNH)[0-9]{4}(INS)/]
-  const ending = [/((((TX)[0-9]{2})|((TXM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z))/, /(((((TN)[0-9]{2})|((TNM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z)))/]
+  const TAF = /(TAF)/;
+  const AMD = /(AMD)/
+  const COR = /(COR)/
+  const ICAO = /[A-Z]{4}/;
+  const DATE = /[0-9]{6}[Z]/;
+  const BECMG = /(BECMG)/;
+  const TEMPO = /(TEMPO)/;
+  const Time = /[0-3][0-9][0-2][0-9][/][0-3][0-9][0-2][0-9]/;
+  const Wind = /([0-3][0-9][0]|(VRB))[0-9][0-9]((KT)|(G)[0-9][0-9](KT))/;
+  const Vis = /((9999)|(9000)|(8000)|(7000)|(6000)|(5000)|(4800)|(4700)|(4500)|(4400)|(4000)|(3700)|(3600)|(3400)|(3200)|(3000)|(2800)|(2600)|(2400)|(2200)|(2000)|(1800)|(1700)|(1600)|(1500)|(1400)|(1300)|(1200)|(1100)|(1000)|(0900)|(0800)|(0700)|(0600)|(0500)|(0400)|(0300)|(0200)|(0100)|(0000))/;
+  const Weather = /((RA)|(-RA)|[+RA]|(SN)|(-RASN)|(-FZRA)|(TS)|(-TS)|[+TS]|(TSRA)|(-TSRA)|[+TSRA])/;
+  const Sky = /((SKC)|(((FEW)|(SCT)|(BKN)|(OVC))([0-9]{3}|[0-9]{3}(CB)))|((VV)[0-9]{3}))/;
+  const Alt = /(QNH)[0-9]{4}(INS)/;
+  const TX = /((((TX)[0-9]{2})|((TXM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z))/;
+  const TN = /(((((TN)[0-9]{2})|((TNM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z)))/;
+  const Error = '';
+  const oLineInit = [/(BECMG)/, Time, Wind, Vis]
+  const oLineTemp = [/(TEMPO)/, Time]
 
 
   //onclick of check TAF causes this function to activate
@@ -32,23 +47,79 @@ const App = (props) => {
     return splittingBlock
   }
 
+  //function for the first line of the TAF regex
+  const buildRegexFirstLine = (firstLine) => {
+    const fLine = firstLine[0].slice(1,2)
+    let fLineOther = firstLine[0].slice(6)
+    const lineContentWx = []
+    const BeginningLine = []
+    for (let bBlock of fLine){
+      if(bBlock.match(AMD)){
+        BeginningLine.push(TAF, AMD, ICAO, DATE, Time, Wind, Vis)
+        fLineOther = firstLine[0].slice(7)
+      } else if (bBlock.match(COR)){
+        BeginningLine.push(TAF, COR, ICAO, DATE, Time, Wind, Vis)
+        fLineOther = firstLine[0].slice(7)
+      } else {
+        BeginningLine.push(TAF, ICAO, DATE, Time, Wind, Vis)
+      }
+    }
+    for (let block of fLineOther){
+      if(block.match(Weather)){
+        lineContentWx.push(Weather)
+      } else if(block.match(Sky)){
+        lineContentWx.push(Sky)
+      } else if(block.match(Alt)){
+        lineContentWx.push(Alt)
+      } else if(block.match(TX)) {
+        lineContentWx.push(TX)
+      } else if(block.match(TN)){
+        lineContentWx.push(TN)
+      } else {
+        lineContentWx.push(Error)
+      }
+    }
+    let Line = BeginningLine.concat(lineContentWx)
+    return Line
+  }
+
+  //building other Lines of the TAF regex
+  const buildRegexOtherLine = (line) => {
+    const Answer = []
+      const otherLineRegex = line.slice(4)
+      Answer.push(otherLineRegex)
+      const lineContent = []
+      for (let Block of otherLineRegex){
+        if(Block.match(Weather)){
+          lineContent.push(Weather)
+        } else if(Block.match(Sky)){
+          lineContent.push(Sky)
+        } else if(Block.match(Alt)){
+          lineContent.push(Alt)
+        } else if(Block.match(TX)) {
+          lineContent.push(TX)
+        } else if (Block.match(TN)){
+          lineContent.push(TN)
+        } else {
+          lineContent.push(Error)
+        }
+      }
+    return lineContent
+  }
+
+
   //function that goes through the array and checks if anything is wrong or not there
   const checkingTAF = (split) => {
     let output = []
+    const regexFirst = buildRegexFirstLine(split)
     for (let line in split){
       let index = parseInt(line)
       let tafRow = split[index]
       let checkerRow = []
-      if(index === 0 && split.length-1 === index){
-        checkerRow = firstLine.concat(ending)
-      } else if(index === 0){
-        checkerRow = firstLine
-      } else if(split.length-1 === index) {
-        checkerRow = otherLines.concat(ending)
-      } else if(undefined) {
-        console.log('========================> Do not understand');
-      } else {
-        checkerRow = otherLines
+      if(index === 0){
+        checkerRow = regexFirst
+      } else { //General Other line 
+        checkerRow = oLineInit.concat(buildRegexOtherLine(tafRow))
       }
       let fLineOutput = tafRow.map((item, index) => {
         if(checkerRow[index] && checkerRow[index].test(item)){
@@ -62,6 +133,29 @@ const App = (props) => {
     return output
   }
 
+  //Function that sets up an area to be pushed to user
+  const testFunc = (split,check) => {
+    let parent = document.createElement('div')
+    for(let line in split){
+      let rowElement = ''
+      for(let block in split[line]){
+        if(check[line][block]){
+          rowElement = rowElement + " " + split[line][block]
+        } else {
+          rowElement = rowElement + " " + `<span style="background:red">${split[line][block]}</span>`
+        }
+      }
+      let garbo = document.createElement('div')
+      if(line>0){
+        garbo.classList.add('indent')
+      }
+      garbo.innerHTML = rowElement
+      parent.appendChild(garbo)
+    }
+    return parent
+  }
+
+  //pushes the content to the user
   const createArea = (output) => {
     var element = document.getElementById('output');
     element.innerHTML = ''
@@ -80,42 +174,24 @@ const App = (props) => {
     })
   }
 
-  //func
-  //  create new array
-  //  loop through the loop split
-  const testFunc = (split,check) => {
-    let parent = document.createElement('div')
-    for(let line in split){
-      let rowElement = ''
-      for(let block in split[line]){
-        if(check[line][block]){
-          rowElement = rowElement + " " + split[line][block]
-        } else {
-          rowElement = rowElement + " " + `<span style="background:red">${split[line][block]}</span>`
-        }
-      }
-      let garbo = document.createElement('div')
-      garbo.innerHTML = rowElement
-      parent.appendChild(garbo)
-    }
-    return parent
-  }
 
   return (
     <div className="App">
-      <div className="TafWebpage">
-        <div className="TafInput">
-            <div>TAF Checker</div>
-            <textarea className="TAFCheck" rows="10" cols="100" onChange={(e) => {handleChange(e)}}></textarea>
-            <button onClick={(e)=>{checkTAF(e)}}>Check TAF</button>
+      <div className="Header">TAF Checker</div>
+      <div className="Taf-Webpage">
+        <div className="Taf-Input">
+            <textarea className="TAF-Check" rows="10" cols="100" onChange={(e) => {handleChange(e)}}></textarea>
         </div>
-        <div id='p1' className="TafOutput">
+        <div className="taf-button">
+            <button className="button" onClick={(e)=>{checkTAF(e)}}>Check Taf</button>
+        </div>
+        <div id='p1' className="Taf-Output">
           <p>Info Area</p>
-          <div id={'output'}/>
+          <div id={'output'} className="App-text"/>
         </div>
-        <div className={'footer'}>       
-          Copyright © By Shaun Lewis (2019 - 2020)
-        </div>
+      </div>
+      <div className={'footer'}>       
+        Copyright © By Shaun Lewis (2019 - 2020)
       </div>
     </div>
   );
