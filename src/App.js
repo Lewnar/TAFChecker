@@ -47,10 +47,6 @@ const App = (props) => {
     return splittingBlock
   }
 
-  const checkHours = () => {
-
-  }
-
   //function for the first line of the TAF regex
   const buildRegexFirstLine = (firstLine) => {
     const fLine = firstLine[0].slice(1,2)
@@ -152,7 +148,6 @@ const App = (props) => {
   }
 
   const checkForSpecialCase = (block, lineNumber) => {
-    //1218/1324
     if(block.match(Time) && block.length === 9 && lineNumber === 0){
       const hour1 = parseInt(block.slice(2,4))
       const hour2 = parseInt(block.slice(7))
