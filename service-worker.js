@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/TAFChecker/precache-manifest.a7829e2d1de4f9c240fc54ef982509e4.js"
+  "/TAFChecker/precache-manifest.cfa3b6c9466b3582b957d751f93d61b0.js"
 );
 
 self.addEventListener('message', (event) => {
