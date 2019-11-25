@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/TAFChecker/static/css/main.12161d59.chunk.css",
-    "main.js": "/TAFChecker/static/js/main.88601b20.chunk.js",
-    "main.js.map": "/TAFChecker/static/js/main.88601b20.chunk.js.map",
+    "main.js": "/TAFChecker/static/js/main.5198b0be.chunk.js",
+    "main.js.map": "/TAFChecker/static/js/main.5198b0be.chunk.js.map",
     "runtime-main.js": "/TAFChecker/static/js/runtime-main.be4fa7cf.js",
     "runtime-main.js.map": "/TAFChecker/static/js/runtime-main.be4fa7cf.js.map",
     "static/js/2.1514aabe.chunk.js": "/TAFChecker/static/js/2.1514aabe.chunk.js",
     "static/js/2.1514aabe.chunk.js.map": "/TAFChecker/static/js/2.1514aabe.chunk.js.map",
     "index.html": "/TAFChecker/index.html",
-    "precache-manifest.cfa3b6c9466b3582b957d751f93d61b0.js": "/TAFChecker/precache-manifest.cfa3b6c9466b3582b957d751f93d61b0.js",
+    "precache-manifest.332a59c915b2d1250e7d04ef35f7fbd7.js": "/TAFChecker/precache-manifest.332a59c915b2d1250e7d04ef35f7fbd7.js",
     "service-worker.js": "/TAFChecker/service-worker.js",
     "static/css/main.12161d59.chunk.css.map": "/TAFChecker/static/css/main.12161d59.chunk.css.map"
   },
@@ -16,6 +16,6 @@
     "static/js/runtime-main.be4fa7cf.js",
     "static/js/2.1514aabe.chunk.js",
     "static/css/main.12161d59.chunk.css",
-    "static/js/main.88601b20.chunk.js"
+    "static/js/main.5198b0be.chunk.js"
   ]
 }
