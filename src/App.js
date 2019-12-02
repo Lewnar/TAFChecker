@@ -18,13 +18,16 @@ const App = (props) => {
   const Vis = /((9999)|(9000)|(8000)|(7000)|(6000)|(5000)|(4800)|(4700)|(4500)|(4400)|(4000)|(3700)|(3600)|(3400)|(3200)|(3000)|(2800)|(2600)|(2400)|(2200)|(2000)|(1800)|(1700)|(1600)|(1500)|(1400)|(1300)|(1200)|(1100)|(1000)|(0900)|(0800)|(0700)|(0600)|(0500)|(0400)|(0300)|(0200)|(0100)|(0000)|([-]0200))/;
   const Weather = /((NSW)|(RA)|([-]RA)|([+]RA)|(SHRA)|([-]SHRA)|([+]SHRA)|(VCSH)|(TS)|([-]TS)|([+]TS)|(TSRA)|([-]TSRA)|([+]TSRA)|(SN)|([-]SN)|([+]SN))/;
   const Sky = /((SKC)|(((FEW)|(SCT)|(BKN)|(OVC))([0-9]{3}|[0-9]{3}(CB)))|((VV)[0-9]{3}))/;
+  const SKC = /(SKC)/;
   const Alt = /(QNH)[0-9]{4}(INS)/;
   const Ice = /(6)[0-9]{5}/;
   const Turb = /((5)[0-9]{5})/;
   const TX = /((((TX)[0-9]{2})|((TXM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z))/;
   const TN = /(((((TN)[0-9]{2})|((TNM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z)))/;
   const Error = '';
-  let skyBlockPerLine = 0
+  let skc = false;
+  let skyBlockPerLine = 0;
+  let Becoming = false;
 
 
 
@@ -110,34 +113,26 @@ const App = (props) => {
       }
     }
     let Data = oLineInit.concat(lineContent)
-    console.log('========================>', Data);
     return Data
   }
 
   //to make sure that the line stays in order.
   const WeatherBECMGCheck = (line) => {
     const lineContent = []
+    let wTest = true
+    let sTest = true
+    let iTest = true
+    let tTest = true
+    let aTest = true
+    let TXTest = true
+    let TNTest = true
     for(let block of line){
-      let wTest = true
-      let sTest = true
-      let iTest = true
-      let tTest = true
-      let aTest = true
       if(wTest === true){
         if (block.match(Weather)){
           lineContent.push(Weather)
         } else {
           wTest = false
         }
-      } else if(sTest === true){
-        if(block.match(Sky)){
-          lineContent.push(Sky)
-        } else {
-          wTest = false
-          sTest = false
-        }
-      } else {
-        lineContent.push(Error)
       }
 
       if(wTest === false && sTest === true){
@@ -169,11 +164,25 @@ const App = (props) => {
           lineContent.push(Alt)
         } else {
           aTest = false
-          lineContent.push(Error)
         }
       }
 
-      
+      if(aTest === false && TXTest === true){
+        if(block.match(TX)){
+          lineContent.push(TX)
+        } else {
+          TXTest = false
+        }
+      }
+
+      if(TXTest === false && TNTest === true){
+        if(block.match(TN)){
+          lineContent.push(TN)
+        } else {
+          TNTest = false
+          lineContent.push(Error)
+        }
+      }
     }
     return lineContent
   }
@@ -199,6 +208,55 @@ const App = (props) => {
         }
       }
     } 
+
+    if(block.match(BECMG)){
+      Becoming = true
+      skc = false
+    }
+    if(Becoming === true && block.match(Time) && block.length === 9 && lineNumber !== 0){
+      Becoming = false
+      const hour1 = parseInt(block.slice(2,4))
+      const hour2 = parseInt(block.slice(7))
+      const date1 = block.slice(0,2)
+      const date2 = block.slice(5,7)
+      if(date2 - date1 === 1){
+        if(hour2 === 0 && hour1 === 23){
+          return true
+       } else {
+         return false
+       }
+      } else {
+        if(hour2 - hour1 === 1){
+           return true
+        } else {
+          return false
+        }
+      }
+    }
+
+    if(block.match(Wind)){
+      const dir = block.slice(0, 3)
+      const spd1 = block.slice(3, 5)
+      const spd2 = block.slice(6, 8)
+      console.log('========================>', dir);
+      console.log('========================>', spd1);
+      console.log('========================>', spd2);
+      if(dir === 'VRB' && spd1 !== '00' && spd1 <= 6){
+        return true
+      } else if(dir === 'VRB' && spd1 >= 25){
+        console.log('========================>Thunderstorm');
+      } else if(dir === 'VRB' && spd1 === '00' || spd1 > 6){
+        return false
+      }
+      
+    }
+
+    if(block.match(SKC)){
+      skc = true
+    }
+    if(!block.match(SKC) && skc === true && block.match(Sky)){
+      return false
+    }
     // if(block.match(Sky)){
     //   skyBlockPerLine++
     //   const layOut = block
