@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "ee16785103e378995e46fa1bf779018b",
+    "revision": "9e5929b58983e8f4ac07d5445787a0b4",
     "url": "/TAFChecker/index.html"
   },
   {
-    "revision": "a71e45b5c187924b6827",
+    "revision": "aefcc3ef7b7f5dc69ffc",
     "url": "/TAFChecker/static/css/main.12161d59.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/TAFChecker/static/js/2.1514aabe.chunk.js"
   },
   {
-    "revision": "a71e45b5c187924b6827",
-    "url": "/TAFChecker/static/js/main.5198b0be.chunk.js"
+    "revision": "aefcc3ef7b7f5dc69ffc",
+    "url": "/TAFChecker/static/js/main.b4609dd6.chunk.js"
   },
   {
     "revision": "a497f7a80d7b5092f5c3",
