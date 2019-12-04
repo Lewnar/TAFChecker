@@ -26,13 +26,12 @@ const App = (props) => {
   const TX = /((((TX)[0-9]{2})|((TXM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z))/;
   const TN = /(((((TN)[0-9]{2})|((TNM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z)))/;
   const Error = '';
+  let cor = false;
   let date = '';
   let time = '';
   let Becoming = false;
   let skc = false;
   let ovc = false;
-  let skyBlockPerLine = 0;
-
 
 
   //onclick of check TAF causes this function to activate
@@ -192,8 +191,12 @@ const App = (props) => {
 
   const checkForSpecialCase = (block, lineNumber, skyBlock) => {
     
+    if(block.match(COR)){
+      cor = true
+    }
+
     //Time at the Beginning of the TAF
-    if(block.match(Time) && block.length === 9 && lineNumber === 0){
+    if(block.match(Time) && block.length === 9 && lineNumber === 0 && cor === false){
       const hour1 = parseInt(block.slice(2,4))
       const hour2 = parseInt(block.slice(7))
       const date1 = block.slice(0,2)
@@ -325,22 +328,6 @@ const App = (props) => {
         }
       }
     }
-
-    // if(block.match(Sky)){
-    //   skyBlockPerLine++
-    //   const layOut = block
-    //   // console.log('========================>', layOut , lineNumber);
-    //   console.log('========================>', skyBlockPerLine);
-    //   if(block.match(skySKC) && skyBlockPerLine === 1){
-    //     return true
-    //   } else if(block.match(skyVV) && skyBlockPerLine === 1){
-    //     return true
-    //   } else if(skyBlockPerLine > 1){
-    //     console.log('========================>Function Time');
-    //   } else {
-    //     return true
-    //   }
-    // }
     return true
   }
 
@@ -352,14 +339,13 @@ const App = (props) => {
       let index = parseInt(line)
       let tafRow = split[index]
       let checkerRow = []
-      skyBlockPerLine = 0
       if(index === 0){ //First TAF Line
         checkerRow = regexFirst
       } else { //General Other TAF line
         checkerRow = buildRegexOtherLine(tafRow)
       }
       let fLineOutput = tafRow.map((item, mapIndex) => {
-        const specialCase = checkForSpecialCase(item, index, skyBlockPerLine)
+        const specialCase = checkForSpecialCase(item, index)
         if(checkerRow[mapIndex] && checkerRow[mapIndex].test(item) && specialCase){
           return true
         } else {
