@@ -16,18 +16,22 @@ const App = (props) => {
   const Time = /[0-3][0-9][0-2][0-9][/][0-3][0-9][0-2][0-9]/;
   const Wind = /([0-3][0-9][0]|(VRB))[0-9][0-9]((KT)|(G)[0-9][0-9](KT))/;
   const Vis = /((9999)|(9000)|(8000)|(7000)|(6000)|(5000)|(4800)|(4700)|(4500)|(4400)|(4000)|(3700)|(3600)|(3400)|(3200)|(3000)|(2800)|(2600)|(2400)|(2200)|(2000)|(1800)|(1700)|(1600)|(1500)|(1400)|(1300)|(1200)|(1100)|(1000)|(0900)|(0800)|(0700)|(0600)|(0500)|(0400)|(0300)|(0200)|(0100)|(0000)|([-]0200))/;
-  const Weather = /((NSW)|(RA)|([-]RA)|([+]RA)|(SHRA)|([-]SHRA)|([+]SHRA)|(VCSH)|(TS)|([-]TS)|([+]TS)|(TSRA)|([-]TSRA)|([+]TSRA)|(SN)|([-]SN)|([+]SN))/;
+  const Weather = /((NSW)|(BR)|(RA)|([-]RA)|([+]RA)|(SHRA)|([-]SHRA)|([+]SHRA)|(VCSH)|(TS)|([-]TS)|([+]TS)|(TSRA)|([-]TSRA)|([+]TSRA)|(SN)|([-]SN)|([+]SN))/;
   const Sky = /((SKC)|(((FEW)|(SCT)|(BKN)|(OVC))([0-9]{3}|[0-9]{3}(CB)))|((VV)[0-9]{3}))/;
   const SKC = /(SKC)/;
+  const OVC = /(OVC[0-9]{3})/
   const Alt = /(QNH)[0-9]{4}(INS)/;
   const Ice = /(6)[0-9]{5}/;
   const Turb = /((5)[0-9]{5})/;
   const TX = /((((TX)[0-9]{2})|((TXM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z))/;
   const TN = /(((((TN)[0-9]{2})|((TNM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z)))/;
   const Error = '';
-  let skc = false;
-  let skyBlockPerLine = 0;
+  let date = '';
+  let time = '';
   let Becoming = false;
+  let skc = false;
+  let ovc = false;
+  let skyBlockPerLine = 0;
 
 
 
@@ -69,7 +73,6 @@ const App = (props) => {
       }
     }
     lineContentWx = WeatherBECMGCheck(fLineOther)
-    console.log('========================>', lineContentWx);
     let Line = BeginningLine.concat(lineContentWx)
     return Line
   }
@@ -189,11 +192,14 @@ const App = (props) => {
 
   const checkForSpecialCase = (block, lineNumber, skyBlock) => {
     
+    //Time at the Beginning of the TAF
     if(block.match(Time) && block.length === 9 && lineNumber === 0){
       const hour1 = parseInt(block.slice(2,4))
       const hour2 = parseInt(block.slice(7))
       const date1 = block.slice(0,2)
       const date2 = block.slice(5,7)
+      date = date1
+      time = hour1
       if(date2 - date1 === 2){
         if((24 - hour1)+hour2 + 24 === 30){
           return true
@@ -209,9 +215,15 @@ const App = (props) => {
       }
     } 
 
+    //Time for Becomming and Temperary lines Checked
     if(block.match(BECMG)){
       Becoming = true
       skc = false
+      ovc = false
+    }
+    if(block.match(TEMPO)){
+      skc = false
+      ovc = false
     }
     if(Becoming === true && block.match(Time) && block.length === 9 && lineNumber !== 0){
       Becoming = false
@@ -234,29 +246,86 @@ const App = (props) => {
       }
     }
 
+    //VRB Winds Checked
     if(block.match(Wind)){
       const dir = block.slice(0, 3)
       const spd1 = block.slice(3, 5)
-      const spd2 = block.slice(6, 8)
-      console.log('========================>', dir);
-      console.log('========================>', spd1);
-      console.log('========================>', spd2);
-      if(dir === 'VRB' && spd1 !== '00' && spd1 <= 6){
+      // const spd2 = block.slice(6, 8)
+      if(dir !== 'VRB'){
+        return true
+      }else if(dir === 'VRB' && spd1 !== '00' && spd1 <= 6){
         return true
       } else if(dir === 'VRB' && spd1 >= 25){
         console.log('========================>Thunderstorm');
       } else if(dir === 'VRB' && spd1 === '00' || spd1 > 6){
         return false
       }
-      
     }
 
+    //Sky Condition checked
     if(block.match(SKC)){
       skc = true
     }
     if(!block.match(SKC) && skc === true && block.match(Sky)){
       return false
     }
+
+    if(ovc === true && block.match(Sky)){
+      return false
+    }
+    if(block.match(OVC)){
+      ovc = true
+    }
+
+    //Max and Min Time Codes Checked
+    if(block.match(TX) || block.match(TN)){
+      const date1 = block.slice(5,7)
+      const time1 = block.slice(7,9)
+      if(time === 7){
+        if(date === date1){
+          if(time1 >= time && time1 <= 23){
+            return true
+          } else {
+            return false
+          }
+        } else if(date !== date1){
+          if(time1 >= 0 && time1 <= 7){
+            return true
+          } else {
+            return false
+          }
+        }
+      } else if(time === 15){
+        if(date === date1){
+          if(time1 >= time && time1 <= 23){
+            return true
+          } else {
+            return false
+          }
+        } else if(date !== date1){
+          if(time1 >= 0 && time1 <= 15){
+            return true
+          } else {
+            return false
+          }
+        }
+      } else if(time === 23){
+        if(date === date1){
+          if(time1 === time){
+            return true
+          } else {
+            return false
+          }
+        } else if(date !== date1){
+          if(time1 >= 0 && time1 <= 23){
+            return true
+          } else {
+            return false
+          }
+        }
+      }
+    }
+
     // if(block.match(Sky)){
     //   skyBlockPerLine++
     //   const layOut = block
