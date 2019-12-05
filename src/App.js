@@ -26,7 +26,7 @@ const App = (props) => {
   const TX = /((((TX)[0-9]{2})|((TXM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z))/;
   const TN = /(((((TN)[0-9]{2})|((TNM)[0-9]{2}))[/][0-3][0-9][0-2][0-9](Z)))/;
   const Error = '';
-  let cor = false;
+  let amd = false;
   let date = '';
   let time = '';
   let Becoming = false;
@@ -191,12 +191,12 @@ const App = (props) => {
 
   const checkForSpecialCase = (block, lineNumber, skyBlock) => {
     
-    if(block.match(COR)){
-      cor = true
+    if(block.match(AMD)){
+      amd = true
     }
 
     //Time at the Beginning of the TAF
-    if(block.match(Time) && block.length === 9 && lineNumber === 0 && cor === false){
+    if(block.match(Time) && block.length === 9 && lineNumber === 0 && amd === false){
       const hour1 = parseInt(block.slice(2,4))
       const hour2 = parseInt(block.slice(7))
       const date1 = block.slice(0,2)
@@ -253,12 +253,12 @@ const App = (props) => {
     if(block.match(Wind)){
       const dir = block.slice(0, 3)
       const spd1 = block.slice(3, 5)
-      // const spd2 = block.slice(6, 8)
+      const spd2 = block.slice(6, 8)
       if(dir !== 'VRB'){
         return true
       }else if(dir === 'VRB' && spd1 !== '00' && spd1 <= 6){
         return true
-      } else if(dir === 'VRB' && spd1 >= 25){
+      } else if(dir === 'VRB' && spd2 >= 25){
         console.log('========================>Thunderstorm');
       } else if(dir === 'VRB' && spd1 === '00' || spd1 > 6){
         return false
